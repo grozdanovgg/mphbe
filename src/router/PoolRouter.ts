@@ -1,0 +1,16 @@
+import { Router } from 'express';
+import PoolController from '../controllers/PoolController';
+
+export default class UserRouter {
+    public router: Router;
+
+    constructor() {
+        this.router = Router();
+        this.routes();
+    }
+
+    public routes(): void {
+        this.router.get('/', PoolController.checkPool);
+        // this.router.post('/', PoolController.createUser);
+    }
+}
