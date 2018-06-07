@@ -11,6 +11,8 @@ export default class UserRouter {
 
     public routes(): void {
         this.router.get('/', PoolController.checkPool);
-        // this.router.post('/', PoolController.createUser);
+        this.router.post('/', PoolController.createPool);
+        this.router.put('/', PoolController.updatePool);
+        this.router.delete('/', PoolController.deletePool);
     }
 }

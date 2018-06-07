@@ -9,6 +9,10 @@ const PoolSchema: Schema = new Schema(
         url: {
             type: String,
             required: true
+        },
+        lastBlockHtmlSelector: {
+            type: String,
+            required: true
         }
     },
     {

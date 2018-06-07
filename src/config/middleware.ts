@@ -7,10 +7,10 @@ import ServerInterface from '../interfaces/ServerInterface';
 import * as express from 'express';
 
 export default class Middleware {
-    static init(server: ServerInterface) :void {
+    static init(server: ServerInterface): void {
 
         // express middleware
-        server.app.use(bodyParser.urlencoded({ extended: true }));
+        server.app.use(bodyParser.urlencoded({ extended: false }));
         server.app.use(bodyParser.json());
         server.app.use(cookieParser());
         server.app.use(compression());
