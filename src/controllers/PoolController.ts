@@ -5,6 +5,7 @@ import PoolService from '../services/PoolService';
 import { debug } from 'util';
 
 class PoolController {
+
     public checkPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
 
         PoolModel
