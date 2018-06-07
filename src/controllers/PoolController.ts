@@ -13,18 +13,18 @@ class PoolController {
             })
             .then((data) => {
 
-                // const url: string = 'https://www.omegapool.cc/index.php?coin=raven&page=blocks';
+                const url: string = 'https://www.omegapool.cc/index.php?coin=raven&page=blocks';
 
-                // PoolService.getHopStatus(data['url'], data['lastBlockHtmlSelector'])
-                //     .then((data) => {
-                //         console.log(data);
-                //         res.status(200).json({ data });
+                PoolService.getHopStatus(data['url'], data['lastBlockHtmlSelector'])
+                    .then((data) => {
+                        console.log(data);
+                        res.status(200).json({ data });
 
-                //     }).catch((err) => {
-                //         console.log(err);
-                //     });
+                    }).catch((err) => {
+                        console.log(err);
+                    });
 
-                res.status(200).json({ data });
+                // res.status(200).json({ data });
             })
             .catch((error: Error) => {
                 res.status(500).json({
