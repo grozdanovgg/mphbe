@@ -4,6 +4,8 @@ import { SSL_OP_LEGACY_SERVER_CONNECT } from 'constants';
 
 class PoolService {
     lastBlockNumber: number = 0;
+
+    activePools: Array<number>;
     public getHopStatus(poolUrl: string, lastBlockHtmlSelector: string): Promise<boolean> {
 
         return this.getlastBlockNumberFound(poolUrl, lastBlockHtmlSelector)
