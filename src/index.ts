@@ -2,7 +2,6 @@ import * as debug from 'debug';
 import * as http from 'http';
 import Server from './server';
 import * as serverHandlers from './serverHandlers';
-import { Application } from 'express-serve-static-core';
 
 debug('ts-express:server');
 

@@ -2,7 +2,7 @@ import { Firestore } from '@google-cloud/firestore';
 import * as express from 'express';
 import Routes from './router/routes';
 import Middleware from './config/middleware';
-import Connection from './config/connection';
+// import Connection from './config/connection';
 
 export default class Server {
 
@@ -13,7 +13,7 @@ export default class Server {
         this.app = express();
 
         Middleware.init(this);
-        Connection.init();
+        // Connection.init();
         Routes.init(this);
     }
 }

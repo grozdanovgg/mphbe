@@ -1,5 +1,5 @@
 import { DocumentReference, WriteResult, Firestore } from '@google-cloud/firestore';
-import PoolModel from '../models/PoolModel';
+// import PoolModel from '../models/PoolModel';
 import * as express from 'express';
 import PoolService from '../services/PoolService';
 import { debug } from 'util';
@@ -105,47 +105,47 @@ class PoolController {
 
     public updatePool(req: express.Request, res: express.Response, next: express.NextFunction): void {
 
-        PoolModel
-            .findOneAndUpdate(
-                { name: req.body.name },
-                // tslint:disable-next-line:ter-indent
-                {
-                    // tslint:disable-next-line:ter-indent
-                    $set: {
-                        name: req.body.name,
-                        url: req.body.url,
-                        lastBlockHtmlSelector: req.body.lastBlockHtmlSelector
-                    }
-                    // tslint:disable-next-line:ter-indent
-                })
-            .then((data) => {
-                res.status(200).json({ data });
-            })
-            .catch((error: Error) => {
-                res.status(500).json({
-                    error: error.message,
-                    errorStack: error.stack
-                });
-                next(error);
-            });
+        // PoolModel
+        //     .findOneAndUpdate(
+        //         { name: req.body.name },
+        //         // tslint:disable-next-line:ter-indent
+        //         {
+        //             // tslint:disable-next-line:ter-indent
+        //             $set: {
+        //                 name: req.body.name,
+        //                 url: req.body.url,
+        //                 lastBlockHtmlSelector: req.body.lastBlockHtmlSelector
+        //             }
+        //             // tslint:disable-next-line:ter-indent
+        //         })
+        //     .then((data) => {
+        //         res.status(200).json({ data });
+        //     })
+        //     .catch((error: Error) => {
+        //         res.status(500).json({
+        //             error: error.message,
+        //             errorStack: error.stack
+        //         });
+        //         next(error);
+        //     });
     }
 
     public deletePool(req: express.Request, res: express.Response, next: express.NextFunction): void {
 
-        PoolModel
-            .remove(
-                { name: { $eq: req.body.name } }
-            )
-            .then((data) => {
-                res.status(200).json({ data });
-            })
-            .catch((error: Error) => {
-                res.status(500).json({
-                    error: error.message,
-                    errorStack: error.stack
-                });
-                next(error);
-            });
+        // PoolModel
+        //     .remove(
+        //         { name: { $eq: req.body.name } }
+        //     )
+        //     .then((data) => {
+        //         res.status(200).json({ data });
+        //     })
+        //     .catch((error: Error) => {
+        //         res.status(500).json({
+        //             error: error.message,
+        //             errorStack: error.stack
+        //         });
+        //         next(error);
+        //     });
     }
 
 }
