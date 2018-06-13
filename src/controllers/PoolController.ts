@@ -5,6 +5,7 @@ import PoolService from '../services/PoolService';
 import { debug } from 'util';
 import DB from '../database/repository';
 import Server from '../server';
+import Pool from '../models/Pool';
 
 // const db: Firestore = new Database().db;
 
@@ -69,11 +70,9 @@ class PoolController {
 
     public createPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
 
-        DB.setDocInCollection('pools', req.body.name, {
-            name: req.body.name,
-            url: req.body.url,
-            lastBlockHtmlSelector: req.body.lastBlockHtmlSelector
-        })
+        const pool: Pool = new Pool()
+
+        DB.setDocInCollection('pools', req.body.name, pool)
             .then((data) => {
                 res.status(200).json({ data });
             })

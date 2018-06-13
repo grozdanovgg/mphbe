@@ -1,6 +1,5 @@
 import * as request from 'request-promise-native';
 import * as cheerio from 'cheerio';
-import { SSL_OP_LEGACY_SERVER_CONNECT } from 'constants';
 
 class PoolService {
     lastBlockNumber: number = 0;
