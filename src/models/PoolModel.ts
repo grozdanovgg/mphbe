@@ -1,5 +1,5 @@
 import { model, Schema, Types } from 'mongoose';
-import { IPool } from "./interfaces/IPoolInterface";
+import { IPool } from "./IPoolInterface";
 
 const PoolSchema: Schema = new Schema(
     {
