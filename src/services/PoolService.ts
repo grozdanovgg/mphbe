@@ -1,12 +1,12 @@
 import * as request from 'request-promise-native';
 import * as cheerio from 'cheerio';
 
-class PoolService {
+class PoolServise {
     lastBlockNumber: number = 0;
 
     activePools: Array<number>;
-    public getHopStatus(poolUrl: string, lastBlockHtmlSelector: string): Promise<boolean> {
 
+    public getHopStatus(poolUrl: string, lastBlockHtmlSelector: string): Promise<boolean> {
         return this.getlastBlockNumberFound(poolUrl, lastBlockHtmlSelector)
             .then((lastBlockNumber) => {
                 return this.isNewBlockFound(lastBlockNumber);
@@ -21,19 +21,9 @@ class PoolService {
             });
 
     }
-    private isNewBlockFound(lastBlockNumber: number): boolean {
-        if (this.lastBlockNumber === 0 && lastBlockNumber) {
-            this.lastBlockNumber = lastBlockNumber;
-        }
 
-        if (this.lastBlockNumber < lastBlockNumber) {
-            return true;
-        }
-
-        return false;
-    }
-    private getlastBlockNumberFound(poolUrl: string, selector: string): Promise<number> {
-        return request(poolUrl)
+    protected async getlastBlockNumberFound(poolUrl: string, selector: string): Promise<number> {
+        return await request(poolUrl)
             .then((htmlString: string): number => {
                 const ch: CheerioStatic = cheerio.load(htmlString);
 
@@ -48,6 +38,18 @@ class PoolService {
             });
     }
 
+    private isNewBlockFound(lastBlockNumber: number): boolean {
+        if (this.lastBlockNumber === 0 && lastBlockNumber) {
+            this.lastBlockNumber = lastBlockNumber;
+        }
+
+        if (this.lastBlockNumber < lastBlockNumber) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
 
-export default new PoolService();
+export default PoolServise;

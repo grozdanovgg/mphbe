@@ -10,7 +10,7 @@ class Token {
         this.name = name;
     }
 
-    public getTokenData() {
+    public getTokenData(): void {
 
 
     }

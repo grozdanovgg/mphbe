@@ -1,10 +1,6 @@
-import { DocumentReference, WriteResult, Firestore } from '@google-cloud/firestore';
-// import PoolModel from '../models/PoolModel';
 import * as express from 'express';
 import PoolService from '../services/PoolService';
-import { debug } from 'util';
 import DB from '../database/repository';
-import Server from '../server';
 import Pool from '../models/Pool';
 
 // const db: Firestore = new Database().db;
@@ -20,7 +16,8 @@ class PoolController {
 
                 collection.forEach((pool) => {
                     const poolData: Object = pool.data;
-                    PoolService.getHopStatus(poolData['url'], poolData['lastBlockHtmlSelector'])
+                    const poolService: PoolService = new PoolService();
+                    poolService.getHopStatus(poolData['url'], poolData['lastBlockHtmlSelector'])
                         .then((data) => {
                             console.log(data);
 
@@ -70,7 +67,7 @@ class PoolController {
 
     public createPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
 
-        const pool: Pool = new Pool()
+        const pool: Pool = new Pool(req.body.name, req.body.blocksUrl, req.body.lastBlockHtmlSelector, false)
 
         DB.setDocInCollection('pools', req.body.name, pool)
             .then((data) => {
