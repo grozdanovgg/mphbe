@@ -1,6 +1,7 @@
 import Firebase from './firebase';
 import { Firestore, WriteResult } from '@google-cloud/firestore';
-import Pool from '../models/Pool';
+import Pool from '../components/Pool/PoolModel';
+
 
 const db: Firestore = new Firebase().db;
 
@@ -19,6 +20,21 @@ class DB {
             })
     }
 
+
+    public getDocInCollection(collection: string, documentId: string): Promise<Pool> {
+
+        return db.collection(collection).doc(documentId).get()
+            .then((doc) => {
+                return <Pool>doc.data();
+            })
+            .catch((err) => {
+                console.log(err)
+
+                return err;
+            })
+            ;
+    }
+
     public getCollection(collection: string):
         Promise<{ id: string; data: Object; }[]> {
 
@@ -33,14 +49,10 @@ class DB {
                 return collection;
             })
             .catch((error) => {
-                return error
                 console.log('Error getting documents', error);
+
+                return error
             });
-    }
-
-    public getDocInCollection(collection: string, documentId: string): Pool {
-
-        return db.collection(collection).doc(documentId);
     }
 }
 

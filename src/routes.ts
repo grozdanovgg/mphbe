@@ -1,7 +1,7 @@
 import * as express from 'express';
 // import UserRouter from './UserRouter';
-import PoolRouter from './PoolRouter';
-import IServer from '../interfaces/ServerInterface';
+import PoolRouter from './components/Pool/PoolRouter';
+import IServer from './interfaces/ServerInterface';
 
 export default class Routes {
     static init(server: IServer): void {

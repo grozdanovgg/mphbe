@@ -1,7 +1,9 @@
 import * as express from 'express';
-import DB from '../database/repository';
-import Pool from '../models/Pool';
-import * as Hop from '../services/HopService';
+import DB from '../../database/repository';
+import Pool from './PoolModel';
+// import * as PoolServise from "./PoolService";
+import * as Hop from '../../components/Token/HopService';
+import IPool from './IPool';
 
 
 class PoolController {
@@ -69,7 +71,14 @@ class PoolController {
 
     public createPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
 
-        const pool: Pool = new Pool(req.body.name, req.body.blocksUrl, req.body.lastBlockHtmlSelector, false)
+        const pool: IPool = {
+            name: req.body.name,
+            blocksUrl: req.body.blocksUrl,
+            tokenUrl: req.body.tokenUrl,
+            blockHtmlSelector: req.body.blockHtmlSelector,
+            hashrateHtmlSelector: req.body.hashrateHtmlSelector,
+            isPoolBase: false
+        }
 
         DB.setDocInCollection('pools', req.body.name, pool)
             .then((data) => {
@@ -97,12 +106,24 @@ class PoolController {
 
 
         this.activePools.push(pool);
-        this.getBestPool();
+        // this.getBestPool();
     }
 
-    public async getBestPool(): Promise<Pool> {
+    public getBestPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
+
+        DB.getDocInCollection('pools', req.query.name)
+            .then((pool: Pool) => {
+                console.log(pool);
+                pool.crawlPoolBlocks();
+                res.status(200).json({ pool });
+
+            }).catch((err) => {
+                console.log(err);
+            });
+
+
         // subscribe to event when found new best pool?
-        return this.bestPool;
+        // return this.bestPool;
 
         // for (let pool of this.activePools) {
 
