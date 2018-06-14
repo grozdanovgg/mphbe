@@ -1,5 +1,4 @@
 import * as express from 'express';
-// import UserRouter from './UserRouter';
 import PoolRouter from './components/Pool/PoolRouter';
 import IServer from './interfaces/ServerInterface';
 

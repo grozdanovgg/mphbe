@@ -2,73 +2,18 @@ import * as express from 'express';
 import DB from '../../database/repository';
 import Pool from './PoolModel';
 // import * as PoolServise from "./PoolService";
-import * as Hop from '../../components/Token/HopService';
+import * as HopService from '../Token/HopService';
 import IPool from './IPool';
 
 
 class PoolController {
 
-    // public getAllPools(req: express.Request, res: express.Response, next: express.NextFunction): void {
-
-    //     DB.getCollection('pools')
-    //         .then((collection) => {
-
-    //             const url: string = 'https://www.omegapool.cc/index.php?coin=raven&page=blocks';
-
-    //             collection.forEach((pool) => {
-    //                 const poolData: Object = pool.data;
-    //                 const poolService: PoolService = new PoolService();
-    //                 poolService.getHopStatus(poolData['url'], poolData['lastBlockHtmlSelector'])
-    //                     .then((data) => {
-    //                         console.log(data);
-
-    //                     }).catch((err) => {
-    //                         console.log(err);
-    //                     });
-    //             })
-
-    //             res.status(200).json(collection);
-    //         })
-    //         .catch((error) => {
-    //             console.log('Error getting documents', error);
-    //             res.status(500).json({
-    //                 error: error.message,
-    //                 errorStack: error.stack
-    //             });
-    //             next(error);
-    //         });
-
-    //     // PoolModel
-    //     //     .findOne({
-    //     //         name: req.query.name
-    //     //     })
-    //     //     .then((data) => {
-
-    //     //         const url: string = 'https://www.omegapool.cc/index.php?coin=raven&page=blocks';
-
-    //     //         PoolService.getHopStatus(data['url'], data['lastBlockHtmlSelector'])
-    //     //             .then((data) => {
-    //     //                 console.log(data);
-    //     //                 res.status(200).json({ data });
-
-    //     //             }).catch((err) => {
-    //     //                 console.log(err);
-    //     //             });
-
-    //     //         // res.status(200).json({ data });
-    //     //     })
-    //     //     .catch((error: Error) => {
-    //     //         res.status(500).json({
-    //     //             error: error.message,
-    //     //             errorStack: error.stack
-    //     //         });
-    //     //         next(error);
-    //     //     });
-    // }
-
     public activePools: Pool[];
     public bestPool: Pool;
 
+    constructor() {
+        this.activePools = [];
+    }
     public createPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
 
         const pool: IPool = {
@@ -101,25 +46,68 @@ class PoolController {
 
     }
 
-    public async startWatchingPool(poolId: string): Promise<void> {
-        const pool: Pool = await DB.getDocInCollection('pools', poolId);
+    public startWatchingPool = async (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction): Promise<void> => {
+
+        let pool: Pool;
+        let result: IPool;
+
+        try {
+            result = await DB.getDocInCollection('pools', req.body.name);
+            pool = new Pool(
+                result.name,
+                result.blocksUrl, result.tokenUrl,
+                result.blockHtmlSelector,
+                result.hashrateHtmlSelector,
+                result.isPoolBase
+            );
 
 
-        this.activePools.push(pool);
-        // this.getBestPool();
+            await DB.setDocInCollection('activePools', pool.name, pool)
+
+            // this.activePools.push(pool)
+            res.status(200).json(pool);
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
     }
 
-    public getBestPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
+    public getBestPool = async (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction): Promise<void> => {
 
-        DB.getDocInCollection('pools', req.query.name)
-            .then((pool: Pool) => {
-                console.log(pool);
-                pool.crawlPoolBlocks();
-                res.status(200).json({ pool });
+        let activePools: Pool[];
+        let collection: Document[];
+        try {
 
-            }).catch((err) => {
-                console.log(err);
-            });
+            collection = await DB.getCollection('activePools')
+            for (let document of collection) {
+
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+
+        this.activePools.forEach((pool: Pool) => {
+            console.log(pool);
+        })
+
+        res.status(200).json(this.activePools);
+        // DB.getDocInCollection('pools', req.query.name)
+        //     .then((pool: Pool) => {
+        //         console.log(pool);
+        //         pool.crawlPoolBlocks();
+        //         res.status(200).json({ pool });
+
+        //     }).catch((err) => {
+        //         console.log(err);
+        //     });
 
 
         // subscribe to event when found new best pool?

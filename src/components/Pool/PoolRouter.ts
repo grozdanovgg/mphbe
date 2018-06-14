@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import PoolController from './PoolController';
-import * as HopService from '../Token/HopService';
-import Pool from './PoolModel';
 
-export default class UserRouter {
+
+export default class PoolRouter {
     public router: Router;
 
     constructor() {
@@ -12,9 +11,11 @@ export default class UserRouter {
     }
 
     public routes(): void {
-        this.router.get('/', PoolController.getBestPool);
+        // this.router.get('/', PoolController.getBestPool);
+        this.router.get('/best', PoolController.getBestPool);
         // this.router.get('/', HopService.getTokenGlobalHashrate);
         this.router.post('/', PoolController.createPool);
+        this.router.post('/start', PoolController.startWatchingPool);
         this.router.put('/', PoolController.updatePool);
         this.router.delete('/', PoolController.deletePool);
     }
