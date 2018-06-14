@@ -5,4 +5,5 @@ export default interface IUser {
     hopBufferMin: number,
     lossPerHop: number
     lossPerHour: number,
+    checkIntervalSec: number,
 };

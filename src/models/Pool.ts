@@ -4,7 +4,6 @@ import PoolServise from "../services/PoolService";
 export default class Pool extends PoolServise implements IPool {
     name: string;
     blocksUrl: string;
-    lastBlockHtmlSelector: string;
     isPoolBase: boolean;
     isPoolActivlyMining: boolean;
     timeFromLastBlockMin: number;
@@ -13,6 +12,8 @@ export default class Pool extends PoolServise implements IPool {
     hopIndexReal: number;
     hopIndexRealBuffered: number;
     hashrateGhPerSec: number;
+    blockHtmlSelector: string;
+    blocNumber: string;
     blockTimeMin: number;
     blockTimeHour: number;
     blockTimeDay: number;
@@ -27,15 +28,12 @@ export default class Pool extends PoolServise implements IPool {
         isPoolBase: boolean
 
     ) {
-        super();
+        super(blocksUrl, lastBlockHtmlSelector);
         this.name = name;
         this.blocksUrl = blocksUrl;
-        this.lastBlockHtmlSelector = lastBlockHtmlSelector;
+        this.blockHtmlSelector = lastBlockHtmlSelector;
         this.isPoolBase = isPoolBase || false;
         this.isPoolActivlyMining = false;
     }
-
-    public initPoolData(): void {
-        super.getlastBlockNumberFound(this.blocksUrl, this.lastBlockHtmlSelector);
-    }
 }
+

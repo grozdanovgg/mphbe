@@ -1,5 +1,6 @@
 import Firebase from './firebase';
 import { Firestore, WriteResult } from '@google-cloud/firestore';
+import Pool from '../models/Pool';
 
 const db: Firestore = new Firebase().db;
 
@@ -37,6 +38,10 @@ class DB {
             });
     }
 
+    public getDocInCollection(collection: string, documentId: string): Pool {
+
+        return db.collection(collection).doc(documentId);
+    }
 }
 
 export default new DB();
