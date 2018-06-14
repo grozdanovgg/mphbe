@@ -2,18 +2,14 @@ import * as express from 'express';
 import DB from '../../database/repository';
 import Pool from './PoolModel';
 // import * as PoolServise from "./PoolService";
-import * as HopService from '../Token/HopService';
+import * as HopService from '../Token/TokenService';
 import IPool from './IPool';
 
 
 class PoolController {
 
-    public activePools: Pool[];
-    public bestPool: Pool;
-
-    constructor() {
-        this.activePools = [];
-    }
+    // public activePools: Pool[];
+    // public bestPool: Pool;
     public createPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
 
         const pool: IPool = {
@@ -94,11 +90,11 @@ class PoolController {
             console.log(error);
         }
 
-        this.activePools.forEach((pool: Pool) => {
-            console.log(pool);
-        })
+        // this.activePools.forEach((pool: Pool) => {
+        //     console.log(pool);
+        // })
 
-        res.status(200).json(this.activePools);
+        // res.status(200).json(this.activePools);
         // DB.getDocInCollection('pools', req.query.name)
         //     .then((pool: Pool) => {
         //         console.log(pool);

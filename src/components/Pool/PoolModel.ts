@@ -3,7 +3,7 @@ import * as request from 'request-promise-native';
 import * as cheerio from 'cheerio';
 import { setInterval, clearInterval } from "timers";
 import { APP_CONFIG } from '../../config/app.config';
-import * as HopService from '../Token/HopService';
+import TokenService from '../Token/TokenService';
 import { ENGINE_METHOD_PKEY_ASN1_METHS } from "constants";
 import Tokens from "../Token/TokensEnum";
 
@@ -85,8 +85,8 @@ export default class Pool implements IPool {
 
     private getAverageBlockTimeMin(): number {
         const averageBlockTime: number =
-            (HopService.tokenGlobalHashrateGhPerSec / this.hashrateGhPerSec)
-            * (HopService.getTokenBlocksPerHour(Tokens.RVN) / 60);
+            (TokenService.tokenGlobalHashrateGhPerSec / this.hashrateGhPerSec)
+            * (TokenService.getTokenBlocksPerHour(Tokens.RVN) / 60);
 
         return averageBlockTime;
     }
