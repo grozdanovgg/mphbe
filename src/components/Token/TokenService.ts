@@ -11,6 +11,7 @@ class TokenService {
     tokenGlobalHashrateGhPerSec: number = 0;
 
     startHopWorker(token: Tokens): void {
+
         this.hopWorkerInterval = setInterval(() => {
             this.getTokenGlobalHashrate(token);
             this.getTokenBlocksPerHour(token);
@@ -30,6 +31,7 @@ class TokenService {
     // };
 
     getTokenGlobalHashrate(token: Tokens): void {
+
         request(CONSTANTS.RAVENCOIN_GLOBAL_HR_API_URL)
             .then((result) => {
                 console.log(+result)
