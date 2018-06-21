@@ -1,5 +1,5 @@
 enum Tokens {
-    RVN = "Ravencoin"
+    RVN = "ravencoin"
 }
 
 export default Tokens;

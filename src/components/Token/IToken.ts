@@ -1,7 +1,12 @@
+import Pool from "../Pool/Pool";
+import Tokens from "./TokensEnum";
+
 export default interface IToken {
-    name: string,
-    nameShort: string,
+    name?: Tokens,
     hashrateGlobalGhPerSec: number,
-    blockPerMinAvg: number,
-    blockReward: number
+    blockPerHourAvg: number,
+    blockReward: number,
+    pools?: Pool[],
+    bestPool?: Pool,
+
 };

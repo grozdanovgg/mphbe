@@ -1,56 +1,26 @@
-import Pool from "../../components/Pool/PoolModel";
-import Tokens from "../Token/TokensEnum";
-import * as request from 'request-promise-native';
-import { CONSTANTS } from "../../config/constants";
-import { APP_CONFIG } from "../../config/app.config";
+import DB from '../../database/repository';
 
-class TokenService {
-    bestPool: Pool;
-    hopWorkerInterval: NodeJS.Timer;
-    activePools: Pool[];
-    tokenGlobalHashrateGhPerSec: number = 0;
-
-    startHopWorker(token: Tokens): void {
-
-        this.hopWorkerInterval = setInterval(() => {
-            this.getTokenGlobalHashrate(token);
-            this.getTokenBlocksPerHour(token);
-            this.getTokenBlockReward(token);
-
-        }, APP_CONFIG.tokenDataRefreshRate)
+export function addPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
+    const pool: IPool = {
+        name: req.body.name,
+        blocksUrl: req.body.blocksUrl,
+        tokenUrl: req.body.tokenUrl,
+        blockHtmlSelector: req.body.blockHtmlSelector,
+        hashrateHtmlSelector: req.body.hashrateHtmlSelector,
+        isPoolBase: false,
+        tokenGlobalHashrateGhPerSec: req.body.tokenGlobalHashrateGhPerSec,
+        tokenBlocksPerHour: req.body.tokenBlocksPerHour,
     }
 
-    stopHopWorker(): void {
-        clearInterval(this.hopWorkerInterval);
-    }
-
-    // TODO
-    // getBestPool(pools: Pool[]): Pool {
-    //     // emmit event when changed...
-    //     return pools[0];
-    // };
-
-    getTokenGlobalHashrate(token: Tokens): void {
-
-        request(CONSTANTS.RAVENCOIN_GLOBAL_HR_API_URL)
-            .then((result) => {
-                console.log(+result)
-                this.tokenGlobalHashrateGhPerSec = +result / 1000000000; // convert to GH/s
-            }).catch((err) => {
-                console.log(err);
+    DB.setDocInSubcollection('tokens', this.name, 'pools', req.body.name, pool)
+        .then((data) => {
+            res.status(200).json({ data });
+        })
+        .catch((error: Error) => {
+            res.status(500).json({
+                error: error.message,
+                errorStack: error.stack
             });
-    }
-
-    getTokenBlocksPerHour(token: Tokens): number {
-        // TODO
-        return CONSTANTS.RAVENCOIN_TOKENS_PER_HOUR;
-    }
-
-    getTokenBlockReward(token: Tokens): number {
-
-        // TODO
-        return CONSTANTS.RAVENCOIN_BLOCK_REWARD;
-    }
+            next(error);
+        });
 }
-
-export default new TokenService();

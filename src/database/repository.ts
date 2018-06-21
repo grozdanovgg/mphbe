@@ -1,6 +1,6 @@
 import Firebase from './firebase';
 import { Firestore, WriteResult } from '@google-cloud/firestore';
-import Pool from '../components/Pool/PoolModel';
+import Pool from '../components/Pool/Pool';
 
 
 const db: Firestore = new Firebase().db;
@@ -33,6 +33,25 @@ class DB {
                 return err;
             })
             ;
+    }
+
+
+    public setDocInSubcollection(
+        collection: string,
+        document: string,
+        subcollection: string,
+        subdocument: string,
+        data: Object): Promise<WriteResult> {
+
+        return db.collection(collection).doc(document).collection(subcollection).doc(subdocument).set(data)
+            .then((res) => {
+                return res
+            })
+            .catch((err) => {
+                console.log(err);
+
+                return err;
+            })
     }
 
     public getCollection(collection: string):

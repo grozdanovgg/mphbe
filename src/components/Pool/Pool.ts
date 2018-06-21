@@ -1,11 +1,9 @@
 import IPool from "./IPool";
 import * as request from 'request-promise-native';
 import * as cheerio from 'cheerio';
-import { setInterval, clearInterval } from "timers";
-import { APP_CONFIG } from '../../config/app.config';
-import TokenService from '../Token/TokenService';
-import { ENGINE_METHOD_PKEY_ASN1_METHS } from "constants";
+import Token from '../Token/Token';
 import Tokens from "../Token/TokensEnum";
+import IToken from "../Token/IToken";
 
 export default class Pool implements IPool {
     name: string;
@@ -28,6 +26,8 @@ export default class Pool implements IPool {
     blockRewardHour: number;
     blockRewardDay: number;
     blockLastNumber: number;
+    tokenGlobalHashrateGhPerSec: number;
+    tokenBlocksPerHour: number;
     poolWorkerInterval: NodeJS.Timer;
 
     constructor(
@@ -36,7 +36,9 @@ export default class Pool implements IPool {
         tokenUrl: string,
         blockHtmlSelector: string,
         hashrateHtmlSelector: string,
-        isPoolBase: boolean
+        isPoolBase: boolean,
+        tokenGlobalHashrateGhPerSec: number,
+        tokenBlocksPerHour: number,
 
     ) {
         this.name = name;
@@ -46,31 +48,48 @@ export default class Pool implements IPool {
         this.hashrateHtmlSelector = hashrateHtmlSelector;
         this.isPoolBase = isPoolBase || false;
         this.isPoolActivlyMining = false;
+        this.tokenGlobalHashrateGhPerSec = tokenGlobalHashrateGhPerSec;
+        this.tokenBlocksPerHour = tokenBlocksPerHour;
 
     }
 
-    public startPoolWorker(): void {
-        this.poolWorkerInterval = setInterval(() => {
+    crawl(): Promise<void> {
+        const promises: Promise<void>[] = [
+            this.crawlPoolBlocks(),
+            this.crawlPoolToken()
+        ];
 
-            const promises: Promise<void>[] = [
-                this.crawlPoolBlocks(),
-                this.crawlPoolToken()
-            ];
-
-            Promise.all(promises)
-                .then((result) => {
-                    console.log(result)
-                    // this.getHopIndex();
-                }).catch((err) => {
-                    console.log(err);
-                });
-
-        }, APP_CONFIG.poolDataRefreshRate)
+        return Promise.all(promises)
+            .then((result) => {
+                console.log(result)
+                // this.getHopIndex();
+            }).catch((err) => {
+                console.log(err);
+            });
     }
 
-    public stopPoolWorker(): void {
-        clearInterval(this.poolWorkerInterval);
-    }
+    // public startPoolWorker(): void {
+    //     this.poolWorkerInterval = setInterval(() => {
+
+    //         const promises: Promise<void>[] = [
+    //             this.crawlPoolBlocks(),
+    //             this.crawlPoolToken()
+    //         ];
+
+    //         Promise.all(promises)
+    //             .then((result) => {
+    //                 console.log(result)
+    //                 // this.getHopIndex();
+    //             }).catch((err) => {
+    //                 console.log(err);
+    //             });
+
+    //     }, APP_CONFIG.poolDataRefreshRate)
+    // }
+
+    // public stopPoolWorker(): void {
+    //     clearInterval(this.poolWorkerInterval);
+    // }
 
     // public getHopIndex(): number {
     //     this.blockTimeMin = this.getAverageBlockTimeMin();
@@ -85,8 +104,8 @@ export default class Pool implements IPool {
 
     private getAverageBlockTimeMin(): number {
         const averageBlockTime: number =
-            (TokenService.tokenGlobalHashrateGhPerSec / this.hashrateGhPerSec)
-            * (TokenService.getTokenBlocksPerHour(Tokens.RVN) / 60);
+            (this.tokenGlobalHashrateGhPerSec / this.hashrateGhPerSec)
+            * (this.tokenBlocksPerHour / 60);
 
         return averageBlockTime;
     }
@@ -179,16 +198,16 @@ export default class Pool implements IPool {
     //         });
     // }
 
-    private isNewBlockFound(lastBlockNumber: number): boolean {
-        if (this.blocNumber === 0 && lastBlockNumber) {
-            this.blocNumber = lastBlockNumber;
-        }
+    // private isNewBlockFound(lastBlockNumber: number): boolean {
+    //     if (this.blocNumber === 0 && lastBlockNumber) {
+    //         this.blocNumber = lastBlockNumber;
+    //     }
 
-        if (this.blocNumber < lastBlockNumber) {
-            return true;
-        }
+    //     if (this.blocNumber < lastBlockNumber) {
+    //         return true;
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 }
 

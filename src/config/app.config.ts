@@ -12,6 +12,6 @@ interface IAppConfig {
 export const APP_CONFIG: IAppConfig = {
     hopPeakPoint: 0.455,
     hopMaxStayPoing: 0.455,
-    tokenDataRefreshRate: 60 * 1000,
-    poolDataRefreshRate: 60 * 1000,
+    tokenDataRefreshRate: 60 * 1000, // _sec x 1000
+    poolDataRefreshRate: 60 * 1000, // _sec x 1000
 }

@@ -1,6 +1,7 @@
 import * as express from 'express';
 import PoolRouter from './components/Pool/PoolRouter';
 import IServer from './interfaces/ServerInterface';
+import TokenRouter from './components/Token/TokenRouter';
 
 export default class Routes {
     static init(server: IServer): void {
@@ -10,6 +11,7 @@ export default class Routes {
 
         // users
         // server.app.use('/v1/users', new UserRouter().router);
-        server.app.use('/v1/pools', new PoolRouter().router);
+        // server.app.use('/v1/pools', new PoolRouter().router);
+        server.app.use('/v1/tokens', new TokenRouter().router);
     }
 }
