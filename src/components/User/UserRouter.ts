@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import UserController from './UserController';
-import Tokens from '../Token/TokensEnum';
 
 
 export default class UserRouter {
@@ -12,11 +11,11 @@ export default class UserRouter {
     }
 
     public routes(): void {
+        this.router.post('/', UserController.createUser);
         // this.router.get('/', PoolController.getBestPool);
         // this.router.get('/best', PoolController.getBestPool);
         // this.router.get('/', HopService.getTokenGlobalHashrate);
         // this.router.post('/tokens', UserController.addToken);
-        this.router.post('/', UserController.createUser);
         // this.router.post('/testSubCol', PoolController.addPoolToToken);
         // this.router.post('/start', PoolController.startWatchingPool);
         // this.router.put('/', PoolController.updatePool);

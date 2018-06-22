@@ -18,76 +18,21 @@ class PoolController {
             tokenBlocksPerHour: req.body.tokenBlocksPerHour,
         }
 
-        DB.setDocInSubcolofSubcol('users', req.body.username, 'tokens', 'rvnToken', 'pools', req.body.name, pool)
-            .then((data) => {
-                res.status(200).json({ data });
-            })
-            .catch((error: Error) => {
-                res.status(500).json({
-                    error: error.message,
-                    errorStack: error.stack
-                });
-                next(error);
+        DB.setDocInSubcolofSubcol(
+            'users', req.body.userName,
+            'tokens', req.body.tokenName,
+            'pools', req.body.poolName,
+            pool
+        ).then((data) => {
+            res.status(200).json({ data });
+        }).catch((error: Error) => {
+            res.status(500).json({
+                error: error.message,
+                errorStack: error.stack
             });
+            next(error);
+        });
     }
-
-
-    // public createPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
-
-    //     const pool: IPool = {
-    //         name: req.body.name,
-    //         blocksUrl: req.body.blocksUrl,
-    //         tokenUrl: req.body.tokenUrl,
-    //         blockHtmlSelector: req.body.blockHtmlSelector,
-    //         hashrateHtmlSelector: req.body.hashrateHtmlSelector,
-    //         isPoolBase: false
-    //     }
-
-    //     DB.setDocInCollection('pools', req.body.name, pool)
-    //         .then((data) => {
-    //             res.status(200).json({ data });
-    //         })
-    //         .catch((error: Error) => {
-    //             res.status(500).json({
-    //                 error: error.message,
-    //                 errorStack: error.stack
-    //             });
-    //             next(error);
-    //         });
-    // }
-
-    // public addPoolToToken(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    //     const pool: IPool = {
-    //         name: req.body.name,
-    //         blocksUrl: req.body.blocksUrl,
-    //         tokenUrl: req.body.tokenUrl,
-    //         blockHtmlSelector: req.body.blockHtmlSelector,
-    //         hashrateHtmlSelector: req.body.hashrateHtmlSelector,
-    //         isPoolBase: false,
-    //         tokenGlobalHashrateGhPerSec: tokenGlobalHashrateGhPerSec,
-    //         tokenBlocksPerHour: tokenBlocksPerHour,
-    //     }
-
-    //     DB.setDocInSubcollection('tokensColectionTest', 'rvnToken', 'pools', req.body.name, pool)
-    //         .then((data) => {
-    //             res.status(200).json({ data });
-    //         })
-    //         .catch((error: Error) => {
-    //             res.status(500).json({
-    //                 error: error.message,
-    //                 errorStack: error.stack
-    //             });
-    //             next(error);
-    //         });
-    // }
-
-    // public updatePool(req: express.Request, res: express.Response, next: express.NextFunction): void {
-
-    // }
-
-    // public deletePool(req: express.Request, res: express.Response, next: express.NextFunction): void {
-
-    // }
 
     public startWatchingPool = async (
         req: express.Request,
@@ -105,8 +50,6 @@ class PoolController {
                 result.blockHtmlSelector,
                 result.hashrateHtmlSelector,
                 result.isPoolBase,
-                result.tokenGlobalHashrateGhPerSec,
-                result.tokenBlocksPerHour,
             );
 
 

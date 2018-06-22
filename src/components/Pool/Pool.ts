@@ -1,6 +1,7 @@
 import IPool from "./IPool";
 import * as request from 'request-promise-native';
 import * as cheerio from 'cheerio';
+import * as TokenService from '../Token/TokenService';
 
 export default class Pool implements IPool {
     name: string;
@@ -34,8 +35,8 @@ export default class Pool implements IPool {
         blockHtmlSelector: string,
         hashrateHtmlSelector: string,
         isPoolBase: boolean,
-        tokenGlobalHashrateGhPerSec: number,
-        tokenBlocksPerHour: number,
+        // tokenGlobalHashrateGhPerSec: number,
+        // tokenBlocksPerHour: number,
 
     ) {
         this.name = name;
@@ -45,69 +46,21 @@ export default class Pool implements IPool {
         this.hashrateHtmlSelector = hashrateHtmlSelector;
         this.isPoolBase = isPoolBase || false;
         this.isPoolActivlyMining = false;
-        this.tokenGlobalHashrateGhPerSec = tokenGlobalHashrateGhPerSec;
-        this.tokenBlocksPerHour = tokenBlocksPerHour;
+        // this.tokenGlobalHashrateGhPerSec = tokenGlobalHashrateGhPerSec;
+        // this.tokenBlocksPerHour = tokenBlocksPerHour;
 
     }
 
-    crawl(): Promise<void> {
+    crawl(): Promise<void[]> {
         const promises: Promise<void>[] = [
             this.crawlPoolBlocks(),
             this.crawlPoolToken()
         ];
 
-        return Promise.all(promises)
-            .then((result) => {
-                console.log(result)
-                // this.getHopIndex();
-            }).catch((err) => {
-                console.log(err);
-            });
+        return Promise.all(promises);
     }
 
-    // public startPoolWorker(): void {
-    //     this.poolWorkerInterval = setInterval(() => {
-
-    //         const promises: Promise<void>[] = [
-    //             this.crawlPoolBlocks(),
-    //             this.crawlPoolToken()
-    //         ];
-
-    //         Promise.all(promises)
-    //             .then((result) => {
-    //                 console.log(result)
-    //                 // this.getHopIndex();
-    //             }).catch((err) => {
-    //                 console.log(err);
-    //             });
-
-    //     }, APP_CONFIG.poolDataRefreshRate)
-    // }
-
-    // public stopPoolWorker(): void {
-    //     clearInterval(this.poolWorkerInterval);
-    // }
-
-    // public getHopIndex(): number {
-    //     this.blockTimeMin = this.getAverageBlockTimeMin();
-
-    // }
-
-
-
-    // Private methods:
-
-
-
-    private getAverageBlockTimeMin(): number {
-        const averageBlockTime: number =
-            (this.tokenGlobalHashrateGhPerSec / this.hashrateGhPerSec)
-            * (this.tokenBlocksPerHour / 60);
-
-        return averageBlockTime;
-    }
-
-    public async crawlPoolBlocks(): Promise<void> {
+    private async crawlPoolBlocks(): Promise<void> {
         await request(this.blocksUrl)
             .then(async (htmlString: string) => {
                 const $: CheerioStatic = cheerio.load(htmlString);
@@ -128,7 +81,11 @@ export default class Pool implements IPool {
                         blockTime = +block.time;
                         this.timeFromLastBlockMin = (Date.now() / 1000 - blockTime) / (60 * 60);
 
-                        this.blockTimeMin = this.getAverageBlockTimeMin();
+                        this.blockTimeMin = TokenService.getAverageBlockTimeMin(
+                            this.tokenGlobalHashrateGhPerSec,
+                            this.tokenBlocksPerHour,
+                            this.hashrateGhPerSec)
+
                         this.roundProgress = this.timeFromLastBlockMin / this.blockTimeMin;
                         this.hopIndexReal =
                             (this.timeFromLastBlockMin + 2) / this.blockTimeMin;

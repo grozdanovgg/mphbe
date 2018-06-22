@@ -20,12 +20,8 @@ export default interface IPool {
     blockRewardHour?: number,
     blockRewardDay?: number,
     blockLastNumber?: number,
-    tokenGlobalHashrateGhPerSec: number,
+    tokenGlobalHashrateGhPerSec?: number,
     tokenBlocksPerHour: number,
-    // userRewardPerBlock: number,
-    // userRewardPerDay: number,
-    // userRewardPerHour: number,
-    // userRewardPerMin: number,
 
 };
 

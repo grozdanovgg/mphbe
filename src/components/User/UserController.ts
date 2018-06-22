@@ -7,28 +7,11 @@ import User from './User';
 
 class UserController {
 
-
     constructor() {
     }
 
-
-
     getUser(req: express.Request, res: express.Response, next: express.NextFunction): void {
-        // UserModel
-        //     .findOne({
-        //         name: req.query.name,
-        //         email: req.query.email
-        //     })
-        //     .then((data) => {
-        //         res.status(200).json({ data });
-        //     })
-        //     .catch((error: Error) => {
-        //         res.status(500).json({
-        //             error: error.message,
-        //             errorStack: error.stack
-        //         });
-        //         next(error);
-        //     });
+
     }
 
     async createUser(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
