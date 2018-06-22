@@ -1,15 +1,17 @@
 import Pool from "../../components/Pool/Pool";
 import Tokens from "../Token/TokensEnum";
+import * as express from 'express';
 import * as request from 'request-promise-native';
 import { CONSTANTS } from "../../config/constants";
 import { APP_CONFIG } from "../../config/app.config";
 import IToken from "./IToken";
-
+import IPool from "../Pool/IPool";
+import DB from '../../database/repository';
 
 class Token implements IToken {
 
     name: Tokens;
-    hashrateGlobalGhPerSec: number = 0;
+    hashrateGlobalGhPerSec: any = 0;
     blockPerHourAvg: number;
     blockReward: number;
     pools: Pool[];
@@ -21,6 +23,32 @@ class Token implements IToken {
     constructor(name: Tokens) {
         this.name = name;
         this.updateInfo();
+    }
+
+
+    addPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
+        const pool: IPool = {
+            name: req.body.name,
+            blocksUrl: req.body.blocksUrl,
+            tokenUrl: req.body.tokenUrl,
+            blockHtmlSelector: req.body.blockHtmlSelector,
+            hashrateHtmlSelector: req.body.hashrateHtmlSelector,
+            isPoolBase: false,
+            tokenGlobalHashrateGhPerSec: req.body.tokenGlobalHashrateGhPerSec,
+            tokenBlocksPerHour: req.body.tokenBlocksPerHour,
+        }
+
+        DB.setDocInSubcol('tokens', this.name, 'pools', req.body.name, pool)
+            .then((data) => {
+                res.status(200).json({ data });
+            })
+            .catch((error: Error) => {
+                res.status(500).json({
+                    error: error.message,
+                    errorStack: error.stack
+                });
+                next(error);
+            });
     }
 
     startHopWorker(token: Tokens): void {
@@ -39,7 +67,8 @@ class Token implements IToken {
 
         try {
             // converting to GH/s
-            this.hashrateGlobalGhPerSec = await +request(CONSTANTS.RAVENCOIN_GLOBAL_HR_API_URL) / 1000000000;
+            this.hashrateGlobalGhPerSec = await request(CONSTANTS.RAVENCOIN_GLOBAL_HR_API_URL);
+            this.hashrateGlobalGhPerSec = +this.hashrateGlobalGhPerSec / 1000000000;
             this.blockPerHourAvg = CONSTANTS.RAVENCOIN_BLOCKS_PER_HOUR;
             this.blockReward = CONSTANTS.RAVENCOIN_BLOCK_REWARD;
 

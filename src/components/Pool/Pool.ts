@@ -1,9 +1,6 @@
 import IPool from "./IPool";
 import * as request from 'request-promise-native';
 import * as cheerio from 'cheerio';
-import Token from '../Token/Token';
-import Tokens from "../Token/TokensEnum";
-import IToken from "../Token/IToken";
 
 export default class Pool implements IPool {
     name: string;

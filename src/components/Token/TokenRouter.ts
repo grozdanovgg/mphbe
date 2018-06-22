@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import Token from './Token';
-import Tokens from './TokensEnum';
+import TokenController from './TokenController';
 
 
-export default class PoolRouter {
+export default class TokenRouter {
     public router: Router;
 
     constructor() {
@@ -15,7 +14,7 @@ export default class PoolRouter {
         // this.router.get('/', PoolController.getBestPool);
         // this.router.get('/best', PoolController.getBestPool);
         // this.router.get('/', HopService.getTokenGlobalHashrate);
-        this.router.post('/add', new Token(Tokens.RVN).startHopWorker);
+        this.router.post('/add', TokenController.addToken);
         // this.router.post('/testSubCol', PoolController.addPoolToToken);
         // this.router.post('/start', PoolController.startWatchingPool);
         // this.router.put('/', PoolController.updatePool);

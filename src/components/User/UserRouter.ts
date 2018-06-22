@@ -3,7 +3,7 @@ import UserController from './UserController';
 import Tokens from '../Token/TokensEnum';
 
 
-export default class PoolRouter {
+export default class UserRouter {
     public router: Router;
 
     constructor() {
@@ -15,7 +15,8 @@ export default class PoolRouter {
         // this.router.get('/', PoolController.getBestPool);
         // this.router.get('/best', PoolController.getBestPool);
         // this.router.get('/', HopService.getTokenGlobalHashrate);
-        this.router.post('/add', UserController.addToken(new Token(Tokens.RVN)));
+        // this.router.post('/tokens', UserController.addToken);
+        this.router.post('/', UserController.createUser);
         // this.router.post('/testSubCol', PoolController.addPoolToToken);
         // this.router.post('/start', PoolController.startWatchingPool);
         // this.router.put('/', PoolController.updatePool);

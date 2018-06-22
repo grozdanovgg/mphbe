@@ -7,9 +7,9 @@ const db: Firestore = new Firebase().db;
 
 class DB {
 
-    public setDocInCollection(collection: string, document: string, data: Object): Promise<WriteResult> {
+    public setDocInCol(collection: string, document: string, data: Object): Promise<WriteResult> {
 
-        return db.collection(collection).doc(document).set(data)
+        return db.collection(collection).doc(document).set(JSON.parse(JSON.stringify(data)))
             .then((res) => {
                 return res
             })
@@ -21,7 +21,7 @@ class DB {
     }
 
 
-    public getDocInCollection(collection: string, documentId: string): Promise<Pool> {
+    public getDocInCol(collection: string, documentId: string): Promise<Pool> {
 
         return db.collection(collection).doc(documentId).get()
             .then((doc) => {
@@ -36,14 +36,41 @@ class DB {
     }
 
 
-    public setDocInSubcollection(
+    public setDocInSubcol(
         collection: string,
         document: string,
         subcollection: string,
         subdocument: string,
         data: Object): Promise<WriteResult> {
 
-        return db.collection(collection).doc(document).collection(subcollection).doc(subdocument).set(data)
+        return db.collection(collection).doc(document)
+            .collection(subcollection).doc(subdocument)
+            .set(JSON.parse(JSON.stringify(data)))
+
+            .then((res) => {
+                return res
+            })
+            .catch((err) => {
+                console.log(err);
+
+                return err;
+            })
+    }
+
+    public setDocInSubcolofSubcol(
+        collection: string,
+        document: string,
+        subcollection: string,
+        subdocument: string,
+        subSubcollection: string,
+        subSubdocument: string,
+        data: Object): Promise<WriteResult> {
+
+        return db.collection(collection).doc(document)
+            .collection(subcollection).doc(subdocument)
+            .collection(subSubcollection).doc(subSubdocument)
+            .set(JSON.parse(JSON.stringify(data)))
+
             .then((res) => {
                 return res
             })
