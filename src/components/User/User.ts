@@ -1,6 +1,7 @@
 import IUser from "./IUser";
 
 class User implements IUser {
+    name: string;
     email: string;
     timePerPoolHopMin: number = 2;
     hopBufferMin: number = 10;
@@ -9,7 +10,8 @@ class User implements IUser {
     checkIntervalSec: number = 60;
 
 
-    constructor(email: string) {
+    constructor(name: string, email: string) {
+        this.name = name;
         this.email = email;
     }
 }

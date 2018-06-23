@@ -15,7 +15,7 @@ class UserController {
     }
 
     async createUser(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-        const user: IUser = new User(req.body.email);
+        const user: IUser = new User(req.body.name, req.body.email);
         try {
             await DB.setDocInCol('users', user.email, user);
             res.status(200).json(user);

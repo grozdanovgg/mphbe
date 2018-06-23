@@ -13,7 +13,7 @@ export default class TokenRouter {
     public routes(): void {
         this.router.post('/add', TokenController.addToken);
         this.router.post('/info', TokenController.getTokenInfo);
-        this.router.get('/best-pool', TokenController.getBestPool);
+        this.router.get('/best-pool', TokenController.calcBestPool);
         // this.router.get('/', PoolController.getBestPool);
         // this.router.get('/best', PoolController.getBestPool);
         // this.router.get('/', HopService.getTokenGlobalHashrate);

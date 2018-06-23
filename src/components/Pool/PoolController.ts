@@ -73,7 +73,7 @@ class PoolController {
         let collection: Document[];
         try {
 
-            collection = await DB.getCollection('activePools')
+            collection = await DB.getAllUsers('activePools')
             for (let document of collection) {
 
             }

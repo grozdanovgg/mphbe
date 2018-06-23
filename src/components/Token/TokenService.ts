@@ -1,6 +1,7 @@
 import { APP_CONFIG } from './../../config/app.config';
 import Token from "./Token";
 import Pool from '../Pool/Pool';
+import DB from '../../database/repository';
 
 const tokens: Token[] = [];
 
@@ -61,4 +62,8 @@ export function getAverageBlockTimeMin(
         * (tokenBlocksPerHour / 60);
 
     return averageBlockTime;
+}
+
+export function getTokenPoolsFromDB(tokenName: string): Pool[] {
+    DB.
 }

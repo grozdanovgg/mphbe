@@ -1,13 +1,32 @@
 import Firebase from './firebase';
 import { Firestore, WriteResult } from '@google-cloud/firestore';
-import Pool from '../components/Pool/Pool';
 
 
 const db: Firestore = new Firebase().db;
 
 class DB {
 
-    public setDocInCol(collection: string, document: string, data: Object): Promise<WriteResult> {
+    getCol(collection: string):
+        Promise<Document[]> {
+
+        return db.collection(collection).get()
+            .then((snapshot) => {
+                const collection: Document[] = [];
+                snapshot.forEach((doc) => {
+                    collection.push(doc.data())
+                    console.log(doc.data());
+                });
+
+                return collection;
+            })
+            .catch((error) => {
+                console.log('Error getting documents', error);
+
+                return error
+            });
+    }
+
+    setDocInCol(collection: string, document: string, data: Document): Promise<WriteResult> {
 
         return db.collection(collection).doc(document).set(JSON.parse(JSON.stringify(data)))
             .then((res) => {
@@ -21,11 +40,11 @@ class DB {
     }
 
 
-    public getDocInCol(collection: string, documentId: string): Promise<Pool> {
+    getDocInCol(collection: string, documentId: string): Promise<Document> {
 
         return db.collection(collection).doc(documentId).get()
-            .then((doc) => {
-                return <Pool>doc.data();
+            .then((doc: Document) => {
+                return doc.['data']();
             })
             .catch((err) => {
                 console.log(err)
@@ -36,7 +55,7 @@ class DB {
     }
 
 
-    public setDocInSubcol(
+    setDocInSubcol(
         collection: string,
         document: string,
         subcollection: string,
@@ -57,7 +76,49 @@ class DB {
             })
     }
 
-    public setDocInSubcolofSubcol(
+    getDocInSubcol(
+        collection: string,
+        document: string,
+        subcollection: string,
+        subdocument: string, ): Promise<Document> {
+
+        return db.collection(collection).doc(document)
+            .collection(subcollection).doc(subdocument)
+            .get()
+            .then((res: Document) => {
+                return res
+            })
+            .catch((err) => {
+                console.log(err);
+
+                return err;
+            })
+    }
+
+    getSubcolOfDoc(
+        collection: string,
+        document: string,
+        subcollection: string,
+    ): Promise<Document[]> {
+
+        return db.collection(collection).doc(document).collection(subcollection).get()
+            .then((snapshot) => {
+                const collection: Document[] = [];
+                snapshot.forEach((doc) => {
+                    collection.push(doc.data())
+                    console.log(doc.data());
+                });
+
+                return collection;
+            })
+            .catch((error) => {
+                console.log('Error getting documents', error);
+
+                return error
+            });
+    }
+
+    setDocInSubcolofSubcol(
         collection: string,
         document: string,
         subcollection: string,
@@ -81,15 +142,45 @@ class DB {
             })
     }
 
-    public getCollection(collection: string):
-        Promise<{ id: string; data: Object; }[]> {
+    getDocInSubcolofSubcol(
+        collection: string,
+        document: string,
+        subcollection: string,
+        subdocument: string,
+        subSubcollection: string,
+        subSubdocument: string, ): Promise<Document> {
 
-        return db.collection(collection).get()
+        return db.collection(collection).doc(document)
+            .collection(subcollection).doc(subdocument)
+            .collection(subSubcollection).doc(subSubdocument)
+            .get()
+            .then((res: Document) => {
+                return res
+            })
+            .catch((err) => {
+                console.log(err);
+
+                return err;
+            })
+    }
+
+    getSubcolOfDocOfSubcol(
+        collection: string,
+        document: string,
+        subcollection: string,
+        subdocument: string,
+        subSubcollection: string,
+    ): Promise<Document[]> {
+
+        return db.collection(collection).doc(document)
+            .collection(subcollection).doc(subdocument)
+            .collection(subSubcollection)
+            .get()
             .then((snapshot) => {
-                const collection: { id: string, data: Object }[] = [];
+                const collection: Document[] = [];
                 snapshot.forEach((doc) => {
-                    collection.push({ id: doc.id, data: doc.data() })
-                    console.log(doc.id, '=>', doc.data());
+                    collection.push(doc.data())
+                    console.log(doc.data());
                 });
 
                 return collection;
@@ -100,6 +191,8 @@ class DB {
                 return error
             });
     }
+
+
 }
 
 export default new DB();

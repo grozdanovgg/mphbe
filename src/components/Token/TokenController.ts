@@ -36,16 +36,20 @@ class TokenController {
         }
     }
 
-    async getBestPool(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-        const tokenPoolsNames: string[] = req.query.poolNames;
+    async calcBestPool(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+        const tokenPoolsNames: string[] = [];
+        tokenPoolsNames.push(...req.query);
 
-        try {
-            const bestPool: Pool = await TokenService.getBestPool(tokenPools);
-            res.status(200).json(bestPool);
-        } catch (error) {
+        res.status(200).json('bestPool');
+        // try {
+        //     const bestPool: Pool = await TokenService.getBestPool(tokenPools);
+        //     res.status(200).json(bestPool);
+        // } catch (error) {
 
-        }
+        // }
     }
+
+
 
 
 }
