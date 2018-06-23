@@ -1,7 +1,6 @@
 import { APP_CONFIG } from './../../config/app.config';
 import Token from "./Token";
 import Pool from '../Pool/Pool';
-import DB from '../../database/repository';
 
 const tokens: Token[] = [];
 
@@ -21,12 +20,6 @@ export async function getTokenInfo(tokenName: string): Promise<Token> {
 
     try {
         await token.updateInfo();
-        // converting to GH/s
-        // token.hashrateGlobalGhPerSec = await request(CONSTANTS.RAVENCOIN_GLOBAL_HR_API_URL);
-        // token.hashrateGlobalGhPerSec = +token.hashrateGlobalGhPerSec / 1000000000;
-        // token.blockPerHourAvg = CONSTANTS.RAVENCOIN_BLOCKS_PER_HOUR;
-        // token.blockReward = CONSTANTS.RAVENCOIN_BLOCK_REWARD;
-        // token.infoUpdatedAt = Date.now();
 
         tokens.push(token);
 
@@ -36,18 +29,21 @@ export async function getTokenInfo(tokenName: string): Promise<Token> {
     }
 }
 
-export async function getBestPool(pools: Pool[]): Promise<Pool> {
+export async function calcBestPool(pools: Pool[]): Promise<Pool> {
 
-    for (let pool of pools) {
-        try {
-            await pool.crawl();
+    try {
+        // TODO crawl all ools
+        await pools[0].crawl()
 
-        } catch (error) {
-            console.log(error);
-        }
+
+        // TODO return only the best pool
+        return pools[0];
+
+    } catch (error) {
+        console.log(error);
+
+        return error;
     }
-
-    return pools[0];
 }
 
 
@@ -62,8 +58,4 @@ export function getAverageBlockTimeMin(
         * (tokenBlocksPerHour / 60);
 
     return averageBlockTime;
-}
-
-export function getTokenPoolsFromDB(tokenName: string): Pool[] {
-    DB.
 }
