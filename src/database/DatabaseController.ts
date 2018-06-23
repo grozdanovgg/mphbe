@@ -5,6 +5,7 @@ import User from '../components/User/User';
 import Token from '../components/Token/Token';
 import Pool from '../components/Pool/Pool';
 import IPool from '../components/Pool/IPool';
+import { Comparations } from './ComparationsEnum';
 
 export async function addUserToDB(user: IUser): Promise<WriteResult> {
     return await repo.setDocInCol('users', user.name, user);
@@ -40,6 +41,35 @@ export async function addPool(username: string, tokenName: string, pool: Pool): 
 export async function getPools(username: string, tokenName: string): Promise<Pool[]> {
     const poolsDocs: IPool[] =
         await repo.getSubcolOfDocOfSubcol('users', username, 'tokens', tokenName, 'pools') as IPool[];
+    const pools: Pool[] = [];
+
+    for (let poolDoc of poolsDocs) {
+        pools.push(new Pool(
+            poolDoc.name,
+            poolDoc.tokenName,
+            poolDoc.blocksUrl,
+            poolDoc.tokenUrl,
+            poolDoc.blockHtmlSelector,
+            poolDoc.hashrateHtmlSelector,
+            poolDoc.isPoolBase
+        ))
+    }
+
+    return pools;
+}
+
+export async function getActivePools(username: string, tokenName: string): Promise<Pool[]> {
+    const poolsDocs: IPool[] =
+        await repo.getSubcolOfDocOfSubcolFilter(
+            'users', username,
+            'tokens', tokenName,
+            'pools',
+            {
+                fieldToFilter: 'isPoolActivlyMining',
+                comparOperator: Comparations.equal,
+                value: true
+            }
+        ) as IPool[];
     const pools: Pool[] = [];
 
     for (let poolDoc of poolsDocs) {

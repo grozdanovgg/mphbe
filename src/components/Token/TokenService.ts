@@ -1,4 +1,4 @@
-import { APP_CONFIG } from './../../config/app.config';
+import { APP_CONFIG } from '../../config/app.config';
 import Token from "./Token";
 import Pool from '../Pool/Pool';
 
@@ -12,7 +12,8 @@ export async function getTokenInfo(tokenName: string): Promise<Token> {
     })
 
     if (tokenKnown !== -1 &&
-        Date.now() - tokens[tokenKnown].infoUpdatedAt < APP_CONFIG.tokenDataRefreshRate) {
+        tokens[tokenKnown] &&
+        Date.now() - tokens[tokenKnown].infoUpdatedAt > APP_CONFIG.tokenDataRefreshRate) {
 
         return tokens[tokenKnown];
     }
@@ -29,12 +30,10 @@ export async function getTokenInfo(tokenName: string): Promise<Token> {
     }
 }
 
-export async function calcBestPool(pools: Pool[]): Promise<Pool> {
+export async function chooseBestPool(pools: Pool[]): Promise<Pool> {
 
     try {
-        // TODO crawl all ools
-        await pools[0].crawl()
-
+        await crawlPools(pools);
 
         // TODO return only the best pool
         return pools[0];
@@ -58,4 +57,16 @@ export function getAverageBlockTimeMin(
         * (tokenBlocksPerHour / 60);
 
     return averageBlockTime;
+}
+
+async function crawlPools(pools: Pool[]): Promise<void> {
+    try {
+        const promises: any = [];
+        for (let pool of pools) {
+            promises.push(pool.crawl());
+        }
+        await Promise.all(promises);
+    } catch (error) {
+        console.log(error);
+    }
 }

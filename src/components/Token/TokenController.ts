@@ -38,9 +38,9 @@ class TokenController {
 
     async getBestPool(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
         try {
-            const pools: Pool[] = await DB.getPools(req.body.userName, req.body.tokenName);
+            const pools: Pool[] = await DB.getActivePools(req.body.userName, req.body.tokenName);
 
-            const bestPool: Pool = await TokenService.calcBestPool(pools);
+            const bestPool: Pool = await TokenService.chooseBestPool(pools);
 
             res.status(200).json(bestPool);
         } catch (error) {

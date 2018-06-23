@@ -48,67 +48,71 @@ export default class Pool implements IPool {
 
     }
 
-    crawl(): Promise<void[]> {
-        const promises: Promise<void>[] = [
-            this.crawlPoolBlocks(),
-            this.crawlPoolToken()
-        ];
-
-        return Promise.all(promises);
-    }
-
-    private async crawlPoolBlocks(): Promise<void> {
+    async crawl(): Promise<void> {
         try {
-            const htmlString: string = await request(this.blocksUrl);
-            const blocksDom: CheerioStatic = cheerio.load(htmlString);
-            const blockCurrentNumber: number = +blocksDom(this.blockHtmlSelector).first().text().trim();
+            const poolBlocksDom: CheerioStatic = await this.getPoolBlocksDom();
+            const blockCurrentNumber: number = +poolBlocksDom(this.blockHtmlSelector).first().text().trim();
 
             if (blockCurrentNumber > this.blockLastNumber) {
-                this.blockLastNumber = blockCurrentNumber;
 
                 let block: { time: string };
                 let blockHash: string;
                 let blockTime: number | string;
 
-                try {
-                    blockHash =
-                        await request(`http://raven-blockchain.info/api/getblockhash?index=${this.blockLastNumber}`)
-                    block = await request(`http://raven-blockchain.info/api/getblock?hash=${blockHash}`);
-                    blockTime = +block.time;
-                    this.timeFromLastBlockMin = (Date.now() / 1000 - blockTime) / (60 * 60);
+                const poolTokenDom: CheerioStatic = await this.getTokenBlocksDom();
+                blockHash =
+                    await request(`http://raven-blockchain.info/api/getblockhash?index=${this.blockLastNumber}`)
+                block = JSON.parse(await request(`http://raven-blockchain.info/api/getblock?hash=${blockHash}`));
 
-                    const tokenInfo: Token = await TokenService.getTokenInfo(this.tokenName);
+                this.blockLastNumber = blockCurrentNumber;
 
-                    this.blockTimeMin = TokenService.getAverageBlockTimeMin(
-                        tokenInfo.hashrateGlobalGhPerSec,
-                        tokenInfo.blockPerHourAvg,
-                        this.hashrateGhPerSec)
+                // TODO Handle also mh/s and others
+                this.hashrateGhPerSec = +poolTokenDom(this.hashrateHtmlSelector)
+                    .first()
+                    .text()
+                    .trim()
+                    .split('Gh')[0].trim()
+                    .split('gH')[0].trim()
+                    .split('GH')[0].trim()
+                    .split('gh')[0].trim()
+                    .split(' ')[0].trim();
+                blockTime = +block.time;
+                this.timeFromLastBlockMin = (Date.now() / 1000 - blockTime) / 60;
 
-                    this.roundProgress = this.timeFromLastBlockMin / this.blockTimeMin;
-                    this.hopIndexReal =
-                        (this.timeFromLastBlockMin + 2) / this.blockTimeMin;
-                    this.hopIndexRealBuffered =
-                        (this.timeFromLastBlockMin + 2 + 10) / this.blockTimeMin;
-                } catch (error) {
-                    console.log(error);
-                }
+                const tokenInfo: Token = await TokenService.getTokenInfo(this.tokenName);
+
+                this.blockTimeMin = TokenService.getAverageBlockTimeMin(
+                    tokenInfo.hashrateGlobalGhPerSec,
+                    tokenInfo.blockPerHourAvg,
+                    this.hashrateGhPerSec)
+
+                this.roundProgress = this.timeFromLastBlockMin / this.blockTimeMin;
+                this.hopIndexReal =
+                    (this.timeFromLastBlockMin + 2) / this.blockTimeMin;
+                this.hopIndexRealBuffered =
+                    (this.timeFromLastBlockMin + 2 + 10) / this.blockTimeMin;
             }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    private async getPoolBlocksDom(): Promise<CheerioStatic> {
+        try {
+            const htmlString: string = await request(this.blocksUrl);
+
+            return cheerio.load(htmlString);
         } catch (error) {
             console.log(error);
         }
     }
 
-    private async crawlPoolToken(): Promise<void> {
+    private async getTokenBlocksDom(): Promise<CheerioStatic> {
         try {
             const htmlString: string = await request(this.tokenUrl);
-            const poolTokenDom: CheerioStatic = cheerio.load(htmlString);
 
-            this.hashrateGhPerSec = +poolTokenDom(this.hashrateHtmlSelector)
-                .first()
-                .text()
-                .trim()
-                .split(' ')[0];
-
+            return cheerio.load(htmlString);
         } catch (error) {
             console.log(error);
         }

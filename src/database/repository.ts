@@ -1,5 +1,6 @@
 import Firebase from './firebase';
 import { Firestore, WriteResult } from '@google-cloud/firestore';
+import IFilter from './IFilter';
 
 
 const db: Firestore = new Firebase().db;
@@ -175,6 +176,36 @@ class Repository {
         return db.collection(collection).doc(document)
             .collection(subcollection).doc(subdocument)
             .collection(subSubcollection)
+            .get()
+            .then((snapshot) => {
+                const collection: Document[] = [];
+                snapshot.forEach((doc) => {
+                    collection.push(doc.data())
+                    console.log(doc.data());
+                });
+
+                return collection;
+            })
+            .catch((error) => {
+                console.log('Error getting documents', error);
+
+                return error
+            });
+    }
+
+    getSubcolOfDocOfSubcolFilter(
+        collection: string,
+        document: string,
+        subcollection: string,
+        subdocument: string,
+        subSubcollection: string,
+        filter: IFilter
+    ): Promise<Document[]> {
+
+        return db.collection(collection).doc(document)
+            .collection(subcollection).doc(subdocument)
+            .collection(subSubcollection)
+            .where(filter.fieldToFilter, filter.comparOperator, filter.value)
             .get()
             .then((snapshot) => {
                 const collection: Document[] = [];
