@@ -1,9 +1,10 @@
 
 export default interface IPool {
-    name: string,
-    blocksUrl: string,
-    tokenUrl: string,
-    isPoolBase: boolean,
+    name?: string,
+    blocksUrl?: string,
+    tokenName?: string,
+    tokenUrl?: string,
+    isPoolBase?: boolean,
     isPoolActivlyMining?: boolean,
     timeFromLastBlockMin?: number,
     roundProgress?: number,
@@ -11,8 +12,8 @@ export default interface IPool {
     hopIndexReal?: number,
     hopIndexRealBuffered?: number,
     hashrateGhPerSec?: number,
-    blockHtmlSelector: string,
-    hashrateHtmlSelector: string,
+    blockHtmlSelector?: string,
+    hashrateHtmlSelector?: string,
     blocNumber?: number;
     blockTimeMin?: number,
     blockTimeHour?: number,
@@ -21,7 +22,7 @@ export default interface IPool {
     blockRewardDay?: number,
     blockLastNumber?: number,
     tokenGlobalHashrateGhPerSec?: number,
-    tokenBlocksPerHour: number,
+    tokenBlocksPerHour?: number,
 
 };
 

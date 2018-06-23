@@ -1,66 +1,31 @@
+import { WriteResult } from '@google-cloud/firestore';
 import * as express from 'express';
-import DB from '../../database/repository';
+import * as DB from '../../database/DatabaseController';
 import Pool from './Pool';
-import IPool from './IPool';
 
 
 class PoolController {
 
-    addPool(req: express.Request, res: express.Response, next: express.NextFunction): void {
-        const pool: IPool = {
-            name: req.body.name,
-            blocksUrl: req.body.blocksUrl,
-            tokenUrl: req.body.tokenUrl,
-            blockHtmlSelector: req.body.blockHtmlSelector,
-            hashrateHtmlSelector: req.body.hashrateHtmlSelector,
-            isPoolBase: false,
-            tokenGlobalHashrateGhPerSec: req.body.tokenGlobalHashrateGhPerSec,
-            tokenBlocksPerHour: req.body.tokenBlocksPerHour,
-        }
+    async addPool(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+        const pool: Pool = new Pool(
+            req.body.name,
+            req.body.blocksUrl,
+            req.body.tokenName,
+            req.body.tokenUrl,
+            req.body.blockHtmlSelector,
+            req.body.hashrateHtmlSelector,
+            false,
+        )
 
-        DB.setDocInSubcolofSubcol(
-            'users', req.body.userName,
-            'tokens', req.body.tokenName,
-            'pools', req.body.poolName,
-            pool
-        ).then((data) => {
-            res.status(200).json({ data });
-        }).catch((error: Error) => {
+        try {
+            const data: WriteResult = await DB.addPool(req.body.userName, req.body.tokenName, pool);
+            res.status(200).json(data);
+        } catch (error) {
             res.status(500).json({
                 error: error.message,
                 errorStack: error.stack
             });
             next(error);
-        });
-    }
-
-    public startWatchingPool = async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction): Promise<void> => {
-
-        let pool: Pool;
-        let result: IPool;
-
-        try {
-            result = await DB.getDocInCol('pools', req.body.name);
-            pool = new Pool(
-                result.name,
-                result.blocksUrl, result.tokenUrl,
-                result.blockHtmlSelector,
-                result.hashrateHtmlSelector,
-                result.isPoolBase,
-            );
-
-
-            await DB.setDocInCol('activePools', pool.name, pool)
-
-            // this.activePools.push(pool)
-            res.status(200).json(pool);
-
-        } catch (err) {
-            console.log(err);
-            res.status(500).json(err);
         }
     }
 
@@ -73,10 +38,10 @@ class PoolController {
         let collection: Document[];
         try {
 
-            collection = await DB.getAllUsers('activePools')
-            for (let document of collection) {
+            // collection = await DB2.getAllUsers('activePools')
+            // for (let document of collection) {
 
-            }
+            // }
 
         } catch (error) {
             console.log(error);

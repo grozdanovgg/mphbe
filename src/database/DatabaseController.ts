@@ -4,6 +4,7 @@ import { WriteResult } from '@google-cloud/firestore';
 import User from '../components/User/User';
 import Token from '../components/Token/Token';
 import Pool from '../components/Pool/Pool';
+import IPool from '../components/Pool/IPool';
 
 export async function addUserToDB(user: IUser): Promise<WriteResult> {
     return await repo.setDocInCol('users', user.name, user);
@@ -36,11 +37,22 @@ export async function addPool(username: string, tokenName: string, pool: Pool): 
     return await repo.setDocInSubcolofSubcol('users', username, 'tokens', tokenName, 'pools', pool.name, pool);
 }
 
-export async function getPools(username: string, tokenName: string): Pool[] {
-    const poolsDocs: Document[] =
-        await repo.getSubcolOfDocOfSubcol('users', username, 'tokens', tokenName, 'pools');
+export async function getPools(username: string, tokenName: string): Promise<Pool[]> {
+    const poolsDocs: IPool[] =
+        await repo.getSubcolOfDocOfSubcol('users', username, 'tokens', tokenName, 'pools') as IPool[];
+    const pools: Pool[] = [];
 
-    const pools: Pool[] = <Pool[]>poolsDocs;
+    for (let poolDoc of poolsDocs) {
+        pools.push(new Pool(
+            poolDoc.name,
+            poolDoc.tokenName,
+            poolDoc.blocksUrl,
+            poolDoc.tokenUrl,
+            poolDoc.blockHtmlSelector,
+            poolDoc.hashrateHtmlSelector,
+            poolDoc.isPoolBase
+        ))
+    }
 
     return pools;
 }

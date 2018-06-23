@@ -1,6 +1,6 @@
 
 import * as express from 'express';
-import DB from '../../database/repository';
+import * as DB from '../../database/DatabaseController';
 import Token from './Token';
 import * as TokenService from '../Token/TokenService';
 import Pool from '../Pool/Pool';
@@ -11,7 +11,7 @@ class TokenController {
         const token: Token = new Token(req.body.tokenName);
 
         try {
-            await DB.setDocInSubcol('users', req.body.username, 'tokens', token.name, token);
+            await DB.addTokenToDb(req.body.username, token);
             res.status(200).json(token);
         } catch (error) {
             console.log(error);
@@ -36,17 +36,19 @@ class TokenController {
         }
     }
 
-    async calcBestPool(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-        const tokenPoolsNames: string[] = [];
-        tokenPoolsNames.push(...req.query);
+    async getBestPool(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+        try {
+            const pools: Pool[] = await DB.getPools(req.body.userName, req.body.tokenName);
 
-        res.status(200).json('bestPool');
-        // try {
-        //     const bestPool: Pool = await TokenService.getBestPool(tokenPools);
-        //     res.status(200).json(bestPool);
-        // } catch (error) {
+            const bestPool: Pool = await TokenService.calcBestPool(pools);
 
-        // }
+            res.status(200).json(bestPool);
+        } catch (error) {
+            res.status(500).json({
+                error: error.message,
+                errorStack: error.stack
+            });
+        }
     }
 
 

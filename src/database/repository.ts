@@ -4,7 +4,7 @@ import { Firestore, WriteResult } from '@google-cloud/firestore';
 
 const db: Firestore = new Firebase().db;
 
-class DB {
+class Repository {
 
     getCol(collection: string):
         Promise<Document[]> {
@@ -44,7 +44,7 @@ class DB {
 
         return db.collection(collection).doc(documentId).get()
             .then((doc: Document) => {
-                return doc.['data']();
+                return doc['data']();
             })
             .catch((err) => {
                 console.log(err)
@@ -195,4 +195,4 @@ class DB {
 
 }
 
-export default new DB();
+export default new Repository();
