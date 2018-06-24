@@ -20,7 +20,6 @@ changeColor.onclick = function (element) {
     });
 };
 
-
 const table = document.getElementById("table-body");
 
 const row = table.insertRow(0);
