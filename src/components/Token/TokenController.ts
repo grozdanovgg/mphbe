@@ -46,7 +46,9 @@ class TokenController {
                 req.body.tokenHashrateGlobalGhPerSec,
                 req.body.tokenBlockPerHourAvg
             );
+
             const poolsObj: { pools: IPool[] } = JSON.parse(req.body.pools);
+
             const pools: Pool[] = poolsObj.pools.map(poolObj => {
                 return new Pool(
                     poolObj.name,

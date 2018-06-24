@@ -9,7 +9,6 @@ class Token implements IToken {
     hashrateGlobalGhPerSec: number = 0;
     blockPerHourAvg: number;
     blockReward: number;
-    pools: Pool[];
     bestPool: Pool;
     infoUpdatedAt: number;
 

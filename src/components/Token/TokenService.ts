@@ -33,8 +33,6 @@ export async function getTokenInfo(tokenName: string): Promise<Token> {
 export async function chooseBestPool(pools: Pool[], token: Token): Promise<Pool> {
 
     try {
-        // await crawlPools(pools);
-
         // TODO return only the best pool
         console.log(token);
         console.log(pools);
@@ -63,8 +61,6 @@ export async function chooseBestPool(pools: Pool[], token: Token): Promise<Pool>
     }
 }
 
-
-
 export function getAverageBlockTimeMin(
     tokenGlobalHashrateGhPerSec: number,
     tokenBlocksPerHour: number,
@@ -75,17 +71,4 @@ export function getAverageBlockTimeMin(
         * (tokenBlocksPerHour / 60);
 
     return averageBlockTime;
-}
-
-async function crawlPools(pools: Pool[]): Promise<void> {
-    try {
-        // const promises: any = [];
-        for (let pool of pools) {
-            // promises.push(pool.crawl());
-            await pool.crawl();
-        }
-        // await Promise.all(promises);
-    } catch (error) {
-        console.log(error);
-    }
 }
