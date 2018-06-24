@@ -10,11 +10,11 @@
             "name": "Start and Debug",
             "preLaunchTask": "tsc watch",
             "timeout": 10000,
-            "program": "${workspaceFolder}\\src\\index.ts",
+            "program": "${workspaceFolder}\\server\\src\\index.ts",
             "restart": true,
-            "cwd": "${workspaceRoot}",
+            "cwd": "${workspaceRoot}\\server",
             "outFiles": [
-                "${workspaceFolder}/build/**/*.js"
+                "${workspaceFolder}/server/build/**/*.js"
             ],
             "sourceMaps": true
         }
