@@ -30,13 +30,31 @@ export async function getTokenInfo(tokenName: string): Promise<Token> {
     }
 }
 
-export async function chooseBestPool(pools: Pool[]): Promise<Pool> {
+export async function chooseBestPool(pools: Pool[], token: Token): Promise<Pool> {
 
     try {
-        await crawlPools(pools);
+        // await crawlPools(pools);
 
         // TODO return only the best pool
-        return pools[0];
+        console.log(token);
+        console.log(pools);
+
+        const tokenInfo: Token = await getTokenInfo(this.tokenName);
+        let bestPool: Pool;
+        for (const pool of pools) {
+            pool.calcHopIndex(tokenInfo);
+
+            if (!bestPool) {
+                bestPool = pool;
+            }
+
+            if (pool.hopIndexRealBuffered < bestPool.hopIndexRealBuffered) {
+                bestPool = pool;
+            }
+        }
+
+
+        return bestPool;
 
     } catch (error) {
         console.log(error);

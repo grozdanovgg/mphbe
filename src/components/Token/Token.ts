@@ -13,8 +13,14 @@ class Token implements IToken {
     bestPool: Pool;
     infoUpdatedAt: number;
 
-    constructor(name: string) {
+    constructor(
+        name: string,
+        hashrateGlobalGhPerSec?: number,
+        blockPerHourAvg?: number
+    ) {
         this.name = name;
+        this.hashrateGlobalGhPerSec = hashrateGlobalGhPerSec;
+        this.blockPerHourAvg = blockPerHourAvg;
     }
 
     async updateInfo(): Promise<void> {

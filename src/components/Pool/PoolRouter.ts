@@ -11,7 +11,6 @@ export default class PoolRouter {
     }
 
     public routes(): void {
-        this.router.post('/add', PoolController.addPool);
         // this.router.get('/', PoolController.getBestPool);
         // this.router.get('/best', PoolController.getBestPool);
         // this.router.get('/', HopService.getTokenGlobalHashrate);

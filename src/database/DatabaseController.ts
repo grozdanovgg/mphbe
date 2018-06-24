@@ -38,52 +38,52 @@ export async function addPool(username: string, tokenName: string, pool: Pool): 
     return await repo.setDocInSubcolofSubcol('users', username, 'tokens', tokenName, 'pools', pool.name, pool);
 }
 
-export async function getPools(username: string, tokenName: string): Promise<Pool[]> {
-    const poolsDocs: IPool[] =
-        await repo.getSubcolOfDocOfSubcol('users', username, 'tokens', tokenName, 'pools') as IPool[];
-    const pools: Pool[] = [];
+// export async function getPools(username: string, tokenName: string): Promise<Pool[]> {
+//     const poolsDocs: IPool[] =
+//         await repo.getSubcolOfDocOfSubcol('users', username, 'tokens', tokenName, 'pools') as IPool[];
+//     const pools: Pool[] = [];
 
-    for (let poolDoc of poolsDocs) {
-        pools.push(new Pool(
-            poolDoc.name,
-            poolDoc.tokenName,
-            poolDoc.blocksUrl,
-            poolDoc.tokenUrl,
-            poolDoc.blockHtmlSelector,
-            poolDoc.hashrateHtmlSelector,
-            poolDoc.isPoolBase
-        ))
-    }
+//     for (let poolDoc of poolsDocs) {
+//         pools.push(new Pool(
+//             poolDoc.name,
+//             poolDoc.tokenName,
+//             poolDoc.blocksUrl,
+//             poolDoc.tokenUrl,
+//             poolDoc.blockHtmlSelector,
+//             poolDoc.hashrateHtmlSelector,
+//             poolDoc.isPoolBase
+//         ))
+//     }
 
-    return pools;
-}
+//     return pools;
+// }
 
-export async function getActivePools(username: string, tokenName: string): Promise<Pool[]> {
-    const poolsDocs: IPool[] =
-        await repo.getSubcolOfDocOfSubcolFilter(
-            'users', username,
-            'tokens', tokenName,
-            'pools',
-            {
-                fieldToFilter: 'isPoolActivlyMining',
-                comparOperator: Comparations.equal,
-                value: true
-            }
-        ) as IPool[];
-    const pools: Pool[] = [];
+// export async function getActivePools(username: string, tokenName: string): Promise<Pool[]> {
+//     const poolsDocs: IPool[] =
+//         await repo.getSubcolOfDocOfSubcolFilter(
+//             'users', username,
+//             'tokens', tokenName,
+//             'pools',
+//             {
+//                 fieldToFilter: 'isPoolActivlyMining',
+//                 comparOperator: Comparations.equal,
+//                 value: true
+//             }
+//         ) as IPool[];
+//     const pools: Pool[] = [];
 
-    for (let poolDoc of poolsDocs) {
-        pools.push(new Pool(
-            poolDoc.name,
-            poolDoc.tokenName,
-            poolDoc.blocksUrl,
-            poolDoc.tokenUrl,
-            poolDoc.blockHtmlSelector,
-            poolDoc.hashrateHtmlSelector,
-            poolDoc.isPoolBase
-        ))
-    }
+//     for (let poolDoc of poolsDocs) {
+//         pools.push(new Pool(
+//             poolDoc.name,
+//             poolDoc.tokenName,
+//             poolDoc.blocksUrl,
+//             poolDoc.tokenUrl,
+//             poolDoc.blockHtmlSelector,
+//             poolDoc.hashrateHtmlSelector,
+//             poolDoc.isPoolBase
+//         ))
+//     }
 
-    return pools;
-}
+//     return pools;
+// }
 

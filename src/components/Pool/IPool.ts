@@ -15,7 +15,7 @@ export default interface IPool {
     blockHtmlSelector?: string,
     hashrateHtmlSelector?: string,
     blocNumber?: number;
-    blockTimeMin?: number,
+    blockAvgTimeMin?: number,
     blockTimeHour?: number,
     blockTimeDay?: number,
     blockRewardHour?: number,
@@ -25,4 +25,3 @@ export default interface IPool {
     tokenBlocksPerHour?: number,
 
 };
-

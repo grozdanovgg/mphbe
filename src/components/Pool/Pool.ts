@@ -22,9 +22,7 @@ export default class Pool implements IPool {
     blockHtmlSelector: string;
     hashrateHtmlSelector: string;
     blocNumber: number = 0;
-    blockTimeMin: number = 0;
-    blockTimeHour: number = 0;
-    blockTimeDay: number = 0;
+    blockAvgTimeMin: number = 0;
     blockRewardHour: number = 0;
     blockRewardDay: number = 0;
     blockLastNumber: number = 0;
@@ -32,22 +30,13 @@ export default class Pool implements IPool {
     constructor(
         name: string,
         tokenName: string,
-        blocksUrl: string,
-        tokenUrl: string,
-        blockHtmlSelector: string,
-        hashrateHtmlSelector: string,
-        isPoolBase: boolean
-
+        timeFromLastBlockMin: number,
+        hashrateGhPerSec: number
     ) {
         this.name = name;
-        this.blocksUrl = blocksUrl;
         this.tokenName = tokenName;
-        this.tokenUrl = tokenUrl;
-        this.blockHtmlSelector = blockHtmlSelector;
-        this.hashrateHtmlSelector = hashrateHtmlSelector;
-        this.isPoolBase = isPoolBase || false;
-        this.isPoolActivlyMining = false;
-
+        this.timeFromLastBlockMin = timeFromLastBlockMin;
+        this.hashrateGhPerSec = hashrateGhPerSec;
     }
 
     async crawl(): Promise<boolean> {
@@ -62,7 +51,7 @@ export default class Pool implements IPool {
                 .userAgent('Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0')
                 .open('https://hash4.life/site/block?id=3336')
                 .status()
-                .then(function (status: string | number) {
+                .then(function (status: string | number): Promise<never> | void {
                     // if it MAKES it this FAR, then u're good to check the STATUS
 
                     if (Number(status) != 200) {
@@ -91,7 +80,7 @@ export default class Pool implements IPool {
 
                 this.blockLastNumber = blockCurrentNumber;
 
-                const horseman2: Hors = new Horseman({
+                const horseman2: Horseman = new Horseman({
                     loadImages: false,
                     timeout: 15000,
                 });
@@ -100,7 +89,7 @@ export default class Pool implements IPool {
                     .userAgent('Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0')
                     .open('https://hash4.life/site/mining')
                     .status()
-                    .then(function (status: string | number) {
+                    .then(function (status: string): Promise<never> | void {
                         // if it MAKES it this FAR, then u're good to check the STATUS
 
                         if (Number(status) != 200) {
@@ -133,16 +122,16 @@ export default class Pool implements IPool {
 
                 const tokenInfo: Token = await TokenService.getTokenInfo(this.tokenName);
 
-                this.blockTimeMin = TokenService.getAverageBlockTimeMin(
+                this.blockAvgTimeMin = TokenService.getAverageBlockTimeMin(
                     tokenInfo.hashrateGlobalGhPerSec,
                     tokenInfo.blockPerHourAvg,
                     this.hashrateGhPerSec)
 
-                this.roundProgress = this.timeFromLastBlockMin / this.blockTimeMin;
+                this.roundProgress = this.timeFromLastBlockMin / this.blockAvgTimeMin;
                 this.hopIndexReal =
-                    (this.timeFromLastBlockMin + 2) / this.blockTimeMin;
+                    (this.timeFromLastBlockMin + 2) / this.blockAvgTimeMin;
                 this.hopIndexRealBuffered =
-                    (this.timeFromLastBlockMin + 2 + 10) / this.blockTimeMin;
+                    (this.timeFromLastBlockMin + 2 + 10) / this.blockAvgTimeMin;
             }
 
             return;
@@ -153,6 +142,21 @@ export default class Pool implements IPool {
             return;
         }
     }
+
+    calcHopIndex(tokenInfo: Token): void {
+
+        this.blockAvgTimeMin = TokenService.getAverageBlockTimeMin(
+            tokenInfo.hashrateGlobalGhPerSec,
+            tokenInfo.blockPerHourAvg,
+            this.hashrateGhPerSec)
+
+        this.roundProgress = this.timeFromLastBlockMin / this.blockAvgTimeMin;
+        this.hopIndexReal =
+            (this.timeFromLastBlockMin + 2) / this.blockAvgTimeMin;
+        this.hopIndexRealBuffered =
+            (this.timeFromLastBlockMin + 2 + 10) / this.blockAvgTimeMin;
+    }
+
 
     private async getPoolBlocksDom(): Promise<CheerioStatic> {
         try {
@@ -174,4 +178,3 @@ export default class Pool implements IPool {
         }
     }
 }
-
