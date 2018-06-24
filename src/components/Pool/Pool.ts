@@ -1,3 +1,5 @@
+// import horseman from "../../../typings/node-horseman";
+import Horseman = require('node-horseman');
 import IPool from "./IPool";
 import * as request from 'request-promise-native';
 import * as cheerio from 'cheerio';
@@ -48,34 +50,84 @@ export default class Pool implements IPool {
 
     }
 
-    async crawl(): Promise<void> {
+    async crawl(): Promise<boolean> {
         try {
-            const poolBlocksDom: CheerioStatic = await this.getPoolBlocksDom();
-            const blockCurrentNumber: number = +poolBlocksDom(this.blockHtmlSelector).first().text().trim();
+
+            const horseman: Horseman = new Horseman({
+                loadImages: false,
+                timeout: 15000,
+            });
+            let blockCurrentNumber: number;
+            await horseman
+                .userAgent('Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0')
+                .open('https://hash4.life/site/block?id=3336')
+                .status()
+                .then(function (status: string | number) {
+                    // if it MAKES it this FAR, then u're good to check the STATUS
+
+                    if (Number(status) != 200) {
+                        console.log("Was expecting 200, but got", status);
+
+                        return Promise.reject();
+                    }
+                })
+                .text('#maintable > tbody > tr:nth-child(1) > td:nth-child(4) > a')
+                .then((text) => {
+                    console.log(text);
+
+                    blockCurrentNumber = +text.trim();
+                })
+                .close();
 
             if (blockCurrentNumber > this.blockLastNumber) {
-
+                console.log('in');
                 let block: { time: string };
                 let blockHash: string;
                 let blockTime: number | string;
 
-                const poolTokenDom: CheerioStatic = await this.getTokenBlocksDom();
                 blockHash =
                     await request(`http://raven-blockchain.info/api/getblockhash?index=${this.blockLastNumber}`)
                 block = JSON.parse(await request(`http://raven-blockchain.info/api/getblock?hash=${blockHash}`));
 
                 this.blockLastNumber = blockCurrentNumber;
 
-                // TODO Handle also mh/s and others
-                this.hashrateGhPerSec = +poolTokenDom(this.hashrateHtmlSelector)
-                    .first()
-                    .text()
-                    .trim()
-                    .split('Gh')[0].trim()
-                    .split('gH')[0].trim()
-                    .split('GH')[0].trim()
-                    .split('gh')[0].trim()
-                    .split(' ')[0].trim();
+                const horseman2: Hors = new Horseman({
+                    loadImages: false,
+                    timeout: 15000,
+                });
+
+                await horseman2
+                    .userAgent('Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0')
+                    .open('https://hash4.life/site/mining')
+                    .status()
+                    .then(function (status: string | number) {
+                        // if it MAKES it this FAR, then u're good to check the STATUS
+
+                        if (Number(status) != 200) {
+                            console.log("Was expecting 200, but got", status);
+
+                            return Promise.reject();
+                        }
+                    })
+                    .text('#maintable1 > tbody:nth-child(2) > tr:nth-child(22) > td:nth-child(4)')
+                    .then((text) => {
+                        // TODO Handle also mh/s and others
+                        text = text
+                            .trim()
+                            .split('Gh')[0].trim()
+                            .split('gH')[0].trim()
+                            .split('GH')[0].trim()
+                            .split('gh')[0].trim()
+                            .split(' ')[0].trim();
+
+                        console.log(text);
+
+                        this.hashrateGhPerSec = Number(text);
+                        console.log(this.hashrateGhPerSec);
+
+                    })
+                    .close();
+
                 blockTime = +block.time;
                 this.timeFromLastBlockMin = (Date.now() / 1000 - blockTime) / 60;
 
@@ -92,15 +144,19 @@ export default class Pool implements IPool {
                 this.hopIndexRealBuffered =
                     (this.timeFromLastBlockMin + 2 + 10) / this.blockTimeMin;
             }
+
+            return;
         }
         catch (error) {
             console.log(error);
+
+            return;
         }
     }
 
     private async getPoolBlocksDom(): Promise<CheerioStatic> {
         try {
-            const htmlString: string = await request(this.blocksUrl);
+            const htmlString: string = await request(this.blocksUrl, { timeout: 5000 });
 
             return cheerio.load(htmlString);
         } catch (error) {
@@ -108,9 +164,9 @@ export default class Pool implements IPool {
         }
     }
 
-    private async getTokenBlocksDom(): Promise<CheerioStatic> {
+    private async getPoolTokenBlocksDom(): Promise<CheerioStatic> {
         try {
-            const htmlString: string = await request(this.tokenUrl);
+            const htmlString: string = await request(this.tokenUrl, { timeout: 5000 });
 
             return cheerio.load(htmlString);
         } catch (error) {

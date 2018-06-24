@@ -61,11 +61,12 @@ export function getAverageBlockTimeMin(
 
 async function crawlPools(pools: Pool[]): Promise<void> {
     try {
-        const promises: any = [];
+        // const promises: any = [];
         for (let pool of pools) {
-            promises.push(pool.crawl());
+            // promises.push(pool.crawl());
+            await pool.crawl();
         }
-        await Promise.all(promises);
+        // await Promise.all(promises);
     } catch (error) {
         console.log(error);
     }
