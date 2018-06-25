@@ -14,15 +14,31 @@
             "128": "images/get_started128.png"
         }
     },
-    "options_page": "options.html",
+    "options_page": "./options/options.html",
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.omegapool.cc/*"
+            ],
+            "css": [
+                "./content/selector.css"
+            ],
+            "js": [
+                "thirdParty/jquery-3.3.1.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
     "background": {
         "scripts": [
-            "background.js"
+            "thirdParty/jquery-3.3.1.js",
+            "./background/background.js"
         ],
         "persistent": false
     },
     "permissions": [
         "http://localhost:3000/*/",
+        "tabs",
         "activeTab",
         "storage",
         "declarativeContent"

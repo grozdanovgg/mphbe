@@ -1,0 +1,6 @@
+.mphce-hover {
+    outline: 2px dotted red;
+    outline-offset: 2px;
+    color: green;
+    background-color: yellow !important;
+}
