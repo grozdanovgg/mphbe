@@ -8,7 +8,7 @@
         "nodejs",
         "rest",
         "restfull",
-        "api",
+        "api"
     ],
     "description": "This generator will help you to build your own Node.js Express Mongodb API using TypeScript.",
     "author": "Checha Valerii <chechavalera@gmail.com>",
@@ -19,7 +19,7 @@
     "homepage": "https://github.com/ChechaValerii/node-typescript-mongodb#readme",
     "scripts": {
         "server": "tsc && nodemon ./server/build/index.js",
-        "start": "node ./build/index.js",
+        "start": "node ./server/build/index.js",
         "ts:watch": "tsc -w",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
