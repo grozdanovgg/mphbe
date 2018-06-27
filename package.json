@@ -29,7 +29,6 @@
     "dependencies": {
         "@firebase/app-types": "^0.3.2",
         "@types/cheerio": "^0.22.7",
-        "@types/phantomjs": "^1.9.29",
         "@types/request": "^2.47.0",
         "@types/request-promise-native": "^1.0.15",
         "@types/winston": "^2.3.9",
@@ -50,7 +49,6 @@
         "lodash": "4.17.4",
         "mongoose": "5.0.0-rc1",
         "node-horseman": "^3.3.0",
-        "phantomjs": "^2.1.7",
         "request": "^2.87.0",
         "request-promise-native": "^1.0.5",
         "ts-node": "^6.0.3",
