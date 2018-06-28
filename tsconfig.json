@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./server/build/",
+    "outDir": "./build/",
     "module": "commonjs",
     "target": "es2017",
     "lib": [
@@ -14,7 +14,7 @@
     ]
   },
   "include": [
-    "./server/src/**/*"
+    "./src/**/*"
   ],
   "exclude": [
     "node_modules"

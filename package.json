@@ -1,7 +1,7 @@
 {
     "name": "typescript-express-rest-api",
     "version": "1.0.16",
-    "main": "./server/build/index.js",
+    "main": "./build/index.js",
     "keywords": [
         "typescript",
         "node",
@@ -18,8 +18,8 @@
     },
     "homepage": "https://github.com/ChechaValerii/node-typescript-mongodb#readme",
     "scripts": {
-        "server": "tsc && nodemon ./server/build/index.js",
-        "start": "node ./server/build/index.js",
+        "server": "tsc && nodemon ./build/index.js",
+        "start": "node ./build/index.js",
         "ts:watch": "tsc -w",
         "test": "echo \"Error: no test specified\" && exit 1"
     },

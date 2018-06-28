@@ -14,7 +14,7 @@
             "restart": true,
             "cwd": "${workspaceRoot}\\server",
             "outFiles": [
-                "${workspaceFolder}/server/build/**/*.js"
+                "${workspaceFolder}/build/**/*.js"
             ],
             "sourceMaps": true
         }
